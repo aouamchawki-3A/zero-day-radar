@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero-Day Radar - Enterprise SOC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen p-6">
+   
+    <!-- Top Header -->
+    <header class="flex justify-between items-center pb-6 border-b border-slate-800 mb-6">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <span class="text-3xl">🛡️</span>
+            <div>
+                <h1 class="text-2xl font-bold tracking-wide">Zero-Day Radar</h1>
+                <p class="text-xs text-slate-400">Enterprise SOC & Threat Intelligence Platform</p>
+            </div>
+        </div>
+        <button onclick="triggerScan()" class="bg-sky-600 hover:bg-sky-500 text-white font-semibold px-4 py-2 rounded-lg transition shadow-lg shadow-sky-900/40">
+            🚀 Run Full Scan
+        </button>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+       
+        <!-- Far-Range Vulnerabilities (2 Columns) -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
+            <h2 class="text-lg font-semibold mb-4 flex items-center text-sky-400">
+                📡 Far-Range Radar (CISA KEV Feed)
+            </h2>
+            <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-800 text-slate-300 uppercase text-xs sticky top-0">
+                        <tr>
+                            <th class="p-3">CVE ID</th>
+                            <th class="p-3">Vendor</th>
+                            <th class="p-3">Product</th>
+                            <th class="p-3">Level</th>
+                            <th class="p-3">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="threatsTable" class="divide-y divide-slate-800">
+                        <!-- Data injected via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Near-Range SOC Sensors & Status (1 Column) -->
+        <div class="space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
+                <h2 class="text-lg font-semibold mb-4 flex items-center text-emerald-400">
+                    🔍 Near-Range SOC Sensors
+                </h2>
+                <div id="socStatus" class="space-y-3 text-sm font-mono bg-slate-950 p-4 rounded-lg border border-slate-800 text-emerald-400 h-64 overflow-y-auto">
+                    Loading sensor metrics...
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- JavaScript to fetch data -->
+    <script>
+        async function fetchThreats() {
+            try {
+                const res = await fetch('/api/threats');
+                const data = await res.json();
+                const tbody = document.getElementById('threatsTable');
+                tbody.innerHTML = '';
+                data.forEach(item => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-800/50 transition">
+                            <td class="p-3 font-mono text-sky-300">${item.cveID || ''}</td>
+                            <td class="p-3">${item.vendorProject || ''}</td>
+                            <td class="p-3">${item.product || ''}</td>
+                            <td class="p-3"><span class="px-2 py-1 rounded bg-red-950 text-red-400 text-xs font-bold">${item.threatLevel || 'HIGH'}</span></td>
+                            <td class="p-3 font-bold">${item.threatScore || '4'}</td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function fetchSOC() {
+            try {
+                const res = await fetch('/api/soc/status');
+                const data = await res.json();
+                const box = document.getElementById('socStatus');
+                box.innerHTML = `
+                    <div>• Honeypot: ${data.honeypot}</div>
+                    <div class="mt-2">• Open Ports: ${data.open_ports.join(', ')}</div>
+                    <div class="mt-2">• Auth Logs: ${data.auth_logs}</div>
+                    <div class="mt-2 font-bold ${data.is_threat_detected ? 'text-red-400' : 'text-emerald-400'}">
+                        • Status: ${data.is_threat_detected ? '⚠️ THREAT DETECTED' : '🛡️ SYSTEM SECURE'}
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function triggerScan() {
+            alert("Executing full scan...");
+            await fetch('/api/scan/full', { method: 'POST' });
+            fetchThreats();
+            fetchSOC();
+        }
+
+        fetchThreats();
+        fetchSOC();
+        setInterval(fetchSOC, 15000); // تحديث دوري كل 15 ثانية
+    </script>
+</body>
+</html>
