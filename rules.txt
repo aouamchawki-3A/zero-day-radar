@@ -1,0 +1,10 @@
+# ==========================================
+# Zero-Day Radar v2.0 - Security Rules File
+# Format: [THREAT_LEVEL] | [PATTERN_KEY] | [DESCRIPTION]
+# ==========================================
+
+HIGH | decoy_read | محاولة قراءة ملف وهمي أو طعم أمني (Canary File Access)
+HIGH | unauthorized_privilege | رصد محاولة تصعيد صلاحيات مشبوهة
+MEDIUM | high_entropy | اكتشاف ملف ذو إنتروبيا عالية أو مشفر محتمل
+MEDIUM | suspicious_process | نشاط عملية غير معتاد في مسار نظام حساس
+LOW | file_access | تصفح أو فتح اعتيادي لملف مراقبة فرعي
