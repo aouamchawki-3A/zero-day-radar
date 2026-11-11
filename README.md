@@ -1,22 +1,46 @@
-# Zero-Day Radar v3.0 🛡️🚀
+# 🛡️ Zero-Day Radar (Reliable Beta)
 
-An enterprise-grade Web-based Security Operations Center (SOC) & Threat Intelligence Platform, combining Far-Range threat feeds (CISA KEV) with Near-Range local telemetry.
+> **Status:** Active Development / Reliable Beta 
+> **Architecture:** Hybrid C++ Core & Python Analysis Engine via Inter-Process Communication (IPC)
 
 ---
 
-## 🏗️ Architecture v3.0
-* **Backend Core (FastAPI & Python):** High-speed REST API managing threat caching, system telemetry, and autonomous scanning loops.
-* **Performance Engine (C++):** High-performance core (`radar_engine`) handling intensive threat processing and data filtering.
-* **Near-Range SOC Sensors (`soc_modules.py`):** Includes decoy/honeypot file monitoring, port scanning, and authentication log analysis.
-* **Frontend Dashboard (HTML5, Tailwind CSS):** Modern dark-mode SOC interface featuring live threat feeds, KPI cards, and automated status tracking.
+## 📌 About the Project
+**Zero-Day Radar** is a lightweight, performance-oriented security monitoring and threat detection prototype. Designed with a strict engineering philosophy, it avoids unnecessary bloat and focuses on high-speed, reliable system telemetry and local decoy file integrity monitoring.
+
+---
+
+## 🏗️ Architecture & Component Design
+
+The system follows a strict separation of concerns and robust inter-process communication:
+
+1. **C++ Monitoring Core (`radar_core`)**:
+   * Built for high performance and low resource consumption.
+   * Utilizes Linux `inotify` syscalls to monitor critical decoy/sensitive files (e.g., `/tmp/radar-test-decoy.txt`) in real time.
+   * Acts as the parent process managing secure communication via standard pipes.
+
+2. **IPC Bridge (`bridge_worker.py`)**:
+   * Uses low-overhead JSON Lines (JSONL) streamed over standard input/output (`stdin`/`stdout`).
+   * Strictly separates diagnostic logs (`stderr`) from structured telemetry data (`stdout`).
+
+3. **Risk Engine & Analysis (`risk_engine.py`)**:
+   * Sliding window analytics to compute risk scores, categorize threat levels (`HIGH`, `MEDIUM`, `LOW`), and generate security indicators.
+
+4. **Autonomous SOC Dashboard (`dashboard.py`)**:
+   * A clean, dark-themed Tkinter-based GUI providing real-time event streaming, KPI tracking (total events and high alerts), and autonomous execution control.
 
 ---
 
 ## 🚀 Quick Start & Installation
 
-1. **Clone the Repository:**
-   ```bash
-   git clone [https://github.com/aouamchawki-3A/zero-day-radar.git](https://github.com/aouamchawki-3A/zero-day-radar.git)
-   cd zero-day-radar
+### Prerequisites
+* Linux (Ubuntu recommended)
+* GCC (supporting C++17)
+* Python 3.x
 
- 
+### Compilation & Execution
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/ouamchawki-3A/zero-day-radar.git](https://github.com/ouamchawki-3A/zero-day-radar.git)
+   cd zero-day-radar
