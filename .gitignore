@@ -1,7 +1,57 @@
+# ==========================================
+# Zero-Day Radar v3.0
+# Git Ignore Configuration
+# ==========================================
+
+# C++ Build Artifacts
+/core/build/
+/core/bin/
+build/
+bin/
 *.o
+*.a
+*.so
 *.out
 *.exe
-bin/
-build/
-.DS_Store
+
+# Python Virtual Environments
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+
+# Python Test & Cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Logs & Temporary Files
 *.log
+logs/
+tmp/
+temp/
+
+# Sensitive Configuration
+.env
+.env.*
+!.env.example
+config_local.json
+secret_keys.env
+
+# Runtime Data
+vuln_cache.json
+*.pid
+*.sock
+
+# IDE & Operating System
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Testing Artifacts
+test-results/
+coverage/
