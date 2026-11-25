@@ -30,7 +30,7 @@ class LiveSOCDashboard:
         self.process_lock = threading.Lock()
 
         self.core_path = (
-            Path(__file__).resolve().parent / "radar_core"
+            Path(__file__).resolve().parent / "build" / "radar_core"
         )
 
         self._build_interface()
