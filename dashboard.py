@@ -434,7 +434,7 @@ class LiveSOCDashboard:
         try:
             process = subprocess.Popen(
                 [str(self.core_path)],
-                cwd=str(self.core_path.parent),
+                cwd=str(Path(__file__).resolve().parent),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True,
@@ -521,6 +521,9 @@ class LiveSOCDashboard:
                 "event_type",
                 "schema_version"
             )
+        ) or all(
+            key in data
+            for key in ("source", "event", "level")
         )
 
         if not is_event:
@@ -563,13 +566,20 @@ class LiveSOCDashboard:
             "analysis_result"
         )
 
-        message = (
-            f"Event: {event_type} | "
-            f"ID: {event_id} | "
-            f"Risk: {risk_score:g} | "
-            f"Level: {level}"
-        )
-
+        if all(key in data for key in ("source", "event", "level")):
+            message = (
+                f"Event: {data['source']}/{data['event']} | "
+                f"Rule: {data.get('rule', 'N/A')} | "
+                f"Detail: {data.get('detail', 'N/A')} | "
+                f"Level: {level}"
+            )
+        else:
+            message = (
+                f"Event: {event_type} | "
+                f"ID: {event_id} | "
+                f"Risk: {risk_score:g} | "
+                f"Level: {level}"
+            )
         indicators = data.get("indicators", [])
 
         if isinstance(indicators, list) and indicators:
@@ -730,4 +740,4 @@ class LiveSOCDashboard:
 if __name__ == "__main__":
     root = tk.Tk()
     app = LiveSOCDashboard(root)
-    root.mainloop() 
+    root.mainloop()
