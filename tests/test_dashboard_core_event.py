@@ -1,12 +1,14 @@
 from unittest.mock import Mock
 
 from dashboard import LiveSOCDashboard
+from python.risk_engine import RiskEngine
 
 
 def test_high_core_event_counts_once():
     dashboard = LiveSOCDashboard.__new__(LiveSOCDashboard)
     dashboard.total_events = 0
     dashboard.high_alerts = 0
+    dashboard.risk_engine = RiskEngine()
     dashboard.log = Mock()
     dashboard.update_kpi = Mock()
 

@@ -8,6 +8,8 @@ import os
 import sys
 from pathlib import Path
 from datetime import datetime
+from python.risk_engine import RiskEngine
+from python.event_normalizer import normalize_event
 
 
 class LiveSOCDashboard:
@@ -21,6 +23,7 @@ class LiveSOCDashboard:
         # Application state
         self.total_events = 0
         self.high_alerts = 0
+        self.risk_engine = RiskEngine()
         self.is_running = False
 
         self.stop_event = threading.Event()
@@ -395,6 +398,7 @@ class LiveSOCDashboard:
             return
 
         self.stop_event.clear()
+        self.risk_engine = RiskEngine()
         self.is_running = True
 
         self.btn_start.config(
@@ -546,7 +550,7 @@ class LiveSOCDashboard:
         except (ValueError, TypeError):
             risk_score = 0
 
-        if level == "HIGH":
+        if level in ("HIGH", "CRITICAL"):
             self.high_alerts += 1
             log_level = "HIGH"
 
@@ -587,6 +591,23 @@ class LiveSOCDashboard:
                 " | Indicators: "
                 + ", ".join(map(str, indicators))
             )
+        normalized = normalize_event(data)
+
+        if normalized is not None:
+            alert = self.risk_engine.ingest_event(normalized)
+
+            if alert is not None:
+                if level not in ("HIGH", "CRITICAL"):
+                    self.high_alerts += 1
+
+                log_level = "HIGH"
+
+                message += (
+                    " | RISK CORRELATION ALERT"
+                    f" | Entity: {alert['entity_id']}"
+                    f" | Score: {alert['accumulated_score']:g}"
+                    f" | Threshold: {alert['threshold']:g}"
+                )
 
         self.log(message, log_level)
         self.update_kpi()
