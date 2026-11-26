@@ -1,4 +1,4 @@
-// Zero-Day Radar - Core Engine v3.2
+// Zero-Day Radar - Core Engine v3.3
 // Detection engine. Emits one JSON object per line (JSON Lines) on stdout and,
 // if LOG_FILE is set, appends the same lines to that file. Diagnostics: stderr.
 //
@@ -572,7 +572,7 @@ int run(const std::string& target) {
         close(fd);
         return 1;
     }
-    std::cerr << "[*] Zero-Day Radar Core v3.2 watching decoy: " << target << "\n";
+    std::cerr << "[*] Zero-Day Radar Core v3.3 watching decoy: " << target << "\n";
 
     std::thread scanner;
     if (!g_cfg.scanPath.empty()) {
