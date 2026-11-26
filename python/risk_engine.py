@@ -53,7 +53,8 @@ class RiskEngine:
 
     def ingest_event(self, event):
         entity = (
-            event.get("source_ip")
+            event.get("entity_id")
+            or event.get("source_ip")
             or event.get("source")
             or event.get("path")
         )
@@ -74,9 +75,9 @@ class RiskEngine:
         if not math.isfinite(score) or score < 0:
             raise ValueError("Risk score must be finite and non-negative")
 
-        now = time.monotonic()
 
         with self.lock:
+            now = time.monotonic()
             self._cleanup(now)
 
             while len(self.events) >= self.max_events:
