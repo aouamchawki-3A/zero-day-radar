@@ -9,6 +9,7 @@
 //
 // Config:  ./radar.conf (or RADAR_CONF_PATH)   Rules: ./rules.txt (or RADAR_RULES_PATH)
 // Decoy path precedence: argv[1] > RADAR_MONITOR_PATH > DECOY_PATH > /tmp/decoy_passwords.txt
+#include "file_entropy.hpp"
 #include <sys/stat.h>
 #include <sys/inotify.h>
 #include <poll.h>
@@ -433,26 +434,6 @@ bool skipDirName(const std::string& n) {
     return kSkip.count(n) > 0;
 }
 
-// Shannon entropy (bits/byte) of the first 64 KiB. Content is never logged.
-bool fileEntropy(const fs::path& p, double& out) {
-    std::ifstream in(p, std::ios::binary);
-    if (!in) return false;
-    std::vector<unsigned char> buf(64 * 1024);
-    in.read(reinterpret_cast<char*>(buf.data()), static_cast<std::streamsize>(buf.size()));
-    const size_t n = static_cast<size_t>(in.gcount());
-    if (n < 1024) return false;  // too small to judge
-    size_t cnt[256] = {0};
-    for (size_t i = 0; i < n; ++i) ++cnt[buf[i]];
-    double h = 0.0;
-    for (size_t c : cnt) {
-        if (!c) continue;
-        double pr = static_cast<double>(c) / static_cast<double>(n);
-        h -= pr * std::log2(pr);
-    }
-    out = h;
-    return true;
-}
-
 void scanLoop(fs::path root) {
     using Clock = fs::file_time_type::clock;
 
@@ -529,7 +510,7 @@ void scanLoop(fs::path root) {
                             double entropy = 0.0;
 
                             if ((prev == alerted.end() || prev->second != mt) &&
-                                fileEntropy(entry.path(), entropy) &&
+                                radar::fileEntropy(entry.path(), entropy) &&
                                 entropy >= g_cfg.entropyThreshold) {
 
                                 char value[16];
