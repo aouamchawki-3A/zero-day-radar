@@ -38,7 +38,10 @@ indicators, and event correlation.
 
 ```mermaid
 flowchart TD
-A[C++ Engine] --> B[JSONL / IPC] --> C[Python Normalizer] --> D[Python Risk Engine] --> E[SOC Dashboard]
+A["C++ Engine"] --> B["JSONL / IPC"]
+B --> C["Python Normalizer"]
+C --> D["Python Risk Engine"]
+D --> E["SOC Dashboard"]
 ```
 
 ## Risk Correlation
