@@ -1,5 +1,9 @@
-# 🛡️ Zero-Day Radar V3.3
+# 🛡️ Zero-Day Radar v3.3.0
 
+![Tests](https://img.shields.io/badge/Tests-43_Passed-brightgreen)
+![C++](https://img.shields.io/badge/C%2B%2B-17-blue)
+![Python](https://img.shields.io/badge/Python-3-blue)
+![Linux](https://img.shields.io/badge/Platform-Linux-orange)
 > Status: Reliable Beta
 > Architecture: Hybrid C++17 & Python
 > Platform: Linux
@@ -11,6 +15,10 @@ Zero-Day Radar is a lightweight cybersecurity
 monitoring and threat detection prototype designed
 for real-time security telemetry, behavioral
 indicators, and event correlation.
+
+## SOC Dashboard
+
+![SOC Dashboard](docs/images/soc-dashboard.png)
 
 ## Key Features
 
@@ -28,19 +36,10 @@ indicators, and event correlation.
 
 ## System Architecture
 
-C++ Detection Engine
-        |
-        v
-JSONL / IPC Communication
-        |
-        v
-Python Event Normalizer
-        |
-        v
-Python Risk Engine
-        |
-        v
-SOC Dashboard
+```mermaid
+flowchart TD
+A[C++ Engine] --> B[JSONL / IPC] --> C[Python Normalizer] --> D[Python Risk Engine] --> E[SOC Dashboard]
+```
 
 ## Risk Correlation
 
@@ -56,6 +55,12 @@ Maximum stored events: 1000.
 | CRITICAL | 75    |
 
 ## Installation
+
+Ubuntu dependencies:
+
+```bash
+sudo apt install git build-essential python3 python3-venv python3-tk
+```
 
 Requirements:
 
