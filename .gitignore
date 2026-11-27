@@ -59,3 +59,7 @@ coverage/
 # Local development artifacts
 *.bak
 /test_engine
+
+# Legacy compiled binaries
+/radar_core
+/core/radar_core
