@@ -55,3 +55,7 @@ Thumbs.db
 # Testing Artifacts
 test-results/
 coverage/
+
+# Local development artifacts
+*.bak
+/test_engine
